@@ -8,7 +8,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL: postgresql://postgres:postgres@db:5432/laptopdb
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/laptopdb
 
     depends_on:
       - db
