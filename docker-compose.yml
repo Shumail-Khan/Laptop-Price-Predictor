@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+
+    ports:
+      - "8501:8501"
+
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15
+
+    container_name: postgres_db
+
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: laptopdb
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
