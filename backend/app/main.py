@@ -1,9 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
 from .schemas import LaptopInput
 from .predict import predict_price
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, get_db
 from .models import Base, Prediction
 
 Base.metadata.create_all(bind=engine)
@@ -14,12 +14,11 @@ app = FastAPI(title="Laptop Price Predictor API")
 def root():
     return {"message": "Laptop Price Predictor API"}
 
+
 @app.post("/predict")
-def predict(data: LaptopInput):
+def predict(data: LaptopInput, db: Session = Depends(get_db)):
 
     result = predict_price(data.dict())
-
-    db: Session = SessionLocal()
 
     prediction = Prediction(
         company=data.Company,
@@ -31,6 +30,6 @@ def predict(data: LaptopInput):
 
     db.add(prediction)
     db.commit()
-    db.close()
+    db.refresh(prediction)
 
     return result
